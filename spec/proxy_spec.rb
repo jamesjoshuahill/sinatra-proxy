@@ -7,9 +7,28 @@ describe 'Proxy' do
     Sinatra::Application
   end
 
-  it "responds to GET '/' on port 9494" do
-    get 'http://localhost:9494'
+  let(:get_root) { get "http://localhost:#{ENV['PORT']}" }
+
+  it "responds to GET '/' on PORT" do
+    stub_request(:get, 'http://localhost:4567')
+    get_root
     expect(last_response).to be_ok
+  end
+
+  context 'forwards requests to the server' do
+
+    example "GET '/'" do
+      server_request = stub_request(:get, 'http://localhost:4567')
+      get_root
+      expect(server_request).to have_been_requested
+    end
+
+    example "GET '/hello_world'" do
+      server_request = stub_request(:get, 'http://localhost:4567/hello_world')
+      get "http://localhost:#{ENV['PORT']}/hello_world"
+      expect(server_request).to have_been_requested
+    end
+
   end
 
 end
