@@ -8,6 +8,7 @@
 ENV['RACK_ENV'] = 'test'
 
 require 'capybara/rspec'
+require 'webmock/rspec'
 require './server'
 
 RSpec.configure do |config|

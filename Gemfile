@@ -8,6 +8,7 @@ gem 'thin'
 group :development, :test do
   gem 'rspec'
   gem 'capybara'
+  gem 'webmock'
   gem 'guard'
   gem 'guard-rspec'
   gem 'terminal-notifier-guard'
