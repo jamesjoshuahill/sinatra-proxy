@@ -7,9 +7,8 @@
 
 ENV['RACK_ENV'] = 'test'
 
-require 'capybara/rspec'
 require 'webmock/rspec'
-require './server'
+require 'rack/test'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
@@ -21,4 +20,6 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = 'random'
+
+  config.include Rack::Test::Methods
 end
