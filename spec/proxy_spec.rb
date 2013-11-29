@@ -15,7 +15,7 @@ describe 'Proxy' do
     expect(last_response).to be_ok
   end
 
-  context 'forwards requests to the server' do
+  context 'forwards GET requests to the server' do
 
     example "GET '/'" do
       server_request = stub_request(:get, 'http://localhost:4567')
@@ -26,6 +26,12 @@ describe 'Proxy' do
     example "GET '/hello_world'" do
       server_request = stub_request(:get, 'http://localhost:4567/hello_world')
       get "http://localhost:#{ENV['PORT']}/hello_world"
+      expect(server_request).to have_been_requested
+    end
+
+    example "GET '/something_else'" do
+      server_request = stub_request(:get, 'http://localhost:4567/something_else')
+      get "http://localhost:#{ENV['PORT']}/something_else"
       expect(server_request).to have_been_requested
     end
 

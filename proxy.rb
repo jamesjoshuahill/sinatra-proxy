@@ -8,10 +8,6 @@ require 'net/http'
 
 set :port, ENV['PORT'] || 9494
 
-get '/' do
-  Net::HTTP.get('localhost', '/', '4567')
-end
-
-get '/hello_world' do
-  Net::HTTP.get('localhost', '/hello_world', '4567')
+get '/*' do
+  Net::HTTP.get('localhost', request.url, '4567')
 end
