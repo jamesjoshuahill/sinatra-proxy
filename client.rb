@@ -3,7 +3,7 @@
 require 'net/http'
 require 'uri'
 
-port = ENV['PORT'] || '4567'
+port = ENV['PORT'] || '9494'
 
 print 'Fetching "/"... '
 res = Net::HTTP.start('localhost', port) { |h| h.get('/') }

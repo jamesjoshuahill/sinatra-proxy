@@ -6,7 +6,7 @@
 require 'sinatra'
 require 'net/http'
 
-set :port, ENV['PORT'] || 9494
+set :port, ENV['PORT'] || '9494'
 
 get '/*' do
   client_request = Net::HTTP::Get.new(request.url)
