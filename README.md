@@ -60,15 +60,11 @@ of every request forwarded to the server.
 
 I have changed the default port of the proxy to `9494`, so that it does not
 clash with the server running on the same host. You can customise the proxy
-port by specifying the `PORT` environment variable. For example:
-
-```
-$ export PORT=3000
-```
+port by specifying the `PORT` environment variable.
 
 The proxy is started with:
 
-`bundle exec ruby proxy.rb`
+     bundle exec ruby proxy.rb
 
 I used RSpec for TDD, with WebMock and Rack::Test to stub the HTTP requests to
 the server. I used Guard for continuous testing. To run the tests
