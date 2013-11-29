@@ -7,62 +7,53 @@ describe 'Proxy' do
     Sinatra::Application
   end
 
-  let(:get_root) { get "http://localhost:#{ENV['PORT']}" }
+  let(:proxy)  { "http://localhost:#{ENV['PORT']}" }
+  let(:server) { "http://localhost:4567" }
+  let(:api_key_header) { { 'X-API-Key' => "awesomeserver"} }
+
+  def server_request(path, response = nil)
+    @server_request = stub_request(:get, server + path).
+                       with(:headers => api_key_header)
+    @server_request.to_return(response) if response
+    get proxy + path
+  end
+
+  def expect_request_to_server(path)
+    server_request(path)
+    expect(@server_request).to have_been_requested
+  end
 
   it "responds to GET requests" do
-    stub_request(:get, 'http://localhost:4567')
-    get_root
+    stub_request(:get, server)
+    get proxy
     expect(last_response).to be_ok
   end
 
-  context 'forwards GET requests to the server' do
+  context 'forwards GET requests to the server with the API key' do
 
     example "GET '/'" do
-      server_request = stub_request(:get, 'http://localhost:4567')
-      get_root
-      expect(server_request).to have_been_requested
+      expect_request_to_server('/')
     end
 
     example "GET '/hello_world'" do
-      server_request = stub_request(:get, 'http://localhost:4567/hello_world')
-      get "http://localhost:#{ENV['PORT']}/hello_world"
-      expect(server_request).to have_been_requested
+      expect_request_to_server('/hello_world')
     end
 
     example "GET '/something_else'" do
-      server_request = stub_request(:get, 'http://localhost:4567/something_else')
-      get "http://localhost:#{ENV['PORT']}/something_else"
-      expect(server_request).to have_been_requested
+      expect_request_to_server('/something_else')
     end
 
   end
 
-  context 'with the X-API-Key header' do
-
-    example "GET '/'" do
-      server_request = stub_request(:get, 'http://localhost:4567').
-                         with(:headers => { 'X-API-Key' => 'awesomeserver' })
-      get_root
-      expect(server_request).to have_been_requested
-    end
-
-  end
-
-  context "when returning the server's response it includes" do
+  context "when returning the server's response it forwards the" do
 
     example "body" do
-      server_request = stub_request(:get, 'http://localhost:4567').
-                         with(:headers => { 'X-API-Key' => 'awesomeserver' }).
-                         to_return(:body => 'welcome')
-      response = get_root
+      response = server_request('/', { :body => 'welcome' })
       expect(response.body).to eq 'welcome'
     end
 
     example "status code" do
-      server_request = stub_request(:get, 'http://localhost:4567').
-                         with(:headers => { 'X-API-Key' => 'awesomeserver' }).
-                         to_return(:status => 400)
-      response = get_root
+      response = server_request('/', { :status => 400 })
       expect(response.status).to eq 400
     end
 
