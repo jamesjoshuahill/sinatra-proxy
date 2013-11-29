@@ -9,5 +9,7 @@ require 'net/http'
 set :port, ENV['PORT'] || 9494
 
 get '/*' do
-  Net::HTTP.get('localhost', request.url, '4567')
+  forward = Net::HTTP::Get.new(request.url)
+  forward['X-API-Key'] = 'awesomeserver'
+  Net::HTTP.start('localhost', '4567') { |http| http.request(forward) }.body
 end

@@ -9,7 +9,7 @@ describe 'Proxy' do
 
   let(:get_root) { get "http://localhost:#{ENV['PORT']}" }
 
-  it "responds to GET '/' on PORT" do
+  it "responds to GET requests" do
     stub_request(:get, 'http://localhost:4567')
     get_root
     expect(last_response).to be_ok
@@ -33,6 +33,25 @@ describe 'Proxy' do
       server_request = stub_request(:get, 'http://localhost:4567/something_else')
       get "http://localhost:#{ENV['PORT']}/something_else"
       expect(server_request).to have_been_requested
+    end
+
+  end
+
+  context 'with the X-API-Key header' do
+
+    it "adds the API key to the header" do
+      server_request = stub_request(:get, 'http://localhost:4567').
+                         with(:headers => { 'X-API-Key' => 'awesomeserver' })
+      get_root
+      expect(server_request).to have_been_requested
+    end
+
+    it "returns the server's response" do
+      server_request = stub_request(:get, 'http://localhost:4567').
+                         with(:headers => { 'X-API-Key' => 'awesomeserver' }).
+                         to_return(:body => 'welcome')
+      response = get_root
+      expect(response.body).to eq 'welcome'
     end
 
   end
